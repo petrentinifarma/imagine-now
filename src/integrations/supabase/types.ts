@@ -14,7 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      health_intakes: {
+        Row: {
+          age: number
+          complaint_details: string | null
+          complaint_score: number | null
+          created_at: string
+          health_average: number | null
+          id: string
+          improvement_answers: Json
+          main_complaint: string
+          pain_average: number | null
+          patient_name: string
+          phone: string
+          profession: string | null
+          weight_kg: number | null
+        }
+        Insert: {
+          age: number
+          complaint_details?: string | null
+          complaint_score?: number | null
+          created_at?: string
+          health_average?: number | null
+          id?: string
+          improvement_answers?: Json
+          main_complaint: string
+          pain_average?: number | null
+          patient_name: string
+          phone: string
+          profession?: string | null
+          weight_kg?: number | null
+        }
+        Update: {
+          age?: number
+          complaint_details?: string | null
+          complaint_score?: number | null
+          created_at?: string
+          health_average?: number | null
+          id?: string
+          improvement_answers?: Json
+          main_complaint?: string
+          pain_average?: number | null
+          patient_name?: string
+          phone?: string
+          profession?: string | null
+          weight_kg?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
