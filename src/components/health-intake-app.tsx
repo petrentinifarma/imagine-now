@@ -239,8 +239,9 @@ export function HealthIntakeApp() {
             <div className="mb-7 inline-flex w-fit items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm font-bold uppercase text-secondary-foreground">
               <HeartPulse className="h-4 w-4" /> Anamnese inicial
             </div>
-            <h1 className="font-display text-4xl leading-tight text-foreground sm:text-5xl">Vamos nos melhor.</h1>
-            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">Por isso preparei essas perguntas para saber como está sua saúde atualmente. Suas respostas são essenciais para eu pré-avaliar seu caso, ver suas expectativas e principalmente se o tratamento que ofereço será adequado para você.</p>
+            <h1 className="font-display text-4xl leading-tight text-foreground sm:text-5xl">VAMOS NOS CONHECER MELHOR.</h1>
+            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">Preparei algumas perguntas para saber como está sua saúde atualmente.</p>
+            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">Suas respostas são essenciais para eu pré-avaliar seu caso, ver suas expectativas e principalmente se o tratamento que ofereço será ideal para você.</p>
             <div className="mt-8 grid gap-3 text-base font-medium text-foreground">
               <div className="flex items-center gap-3"><ShieldCheck className="h-5 w-5 shrink-0 text-primary" /> Toda informação aqui é sigilosa</div>
               <div className="flex items-center gap-3"><Sparkles className="h-5 w-5 shrink-0 text-primary" /> Cerca de 5 minutos</div>
