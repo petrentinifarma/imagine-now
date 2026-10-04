@@ -205,12 +205,12 @@ export function HealthIntakeApp() {
       phone: data.phone.trim(),
       main_complaint: data.complaint.trim(),
       complaint_details: data.complaintDetails.trim() || null,
-      complaint_score: data.complaintSkipped ? null : data.complaintScore,
+      complaint_score: data.complaintScore,
       improvement_answers: {
         goals: data.improvements,
         additional_notes: [data.additionalOne, data.additionalTwo].filter(Boolean),
       },
-      pain_average: data.complaintSkipped ? null : data.complaintScore,
+      pain_average: data.complaintScore,
       health_average: healthAverage,
     });
     setSubmitting(false);
@@ -298,7 +298,7 @@ export function HealthIntakeApp() {
 
           {step === 5 && <><QuestionHeading eyebrow="Queixa principal" title="O que está incomodando você hoje?" hint="Descreva com suas palavras o principal motivo para buscar acompanhamento." /><Textarea autoFocus value={data.complaint} onChange={(event) => update("complaint", event.target.value)} placeholder="Ex.: Sinto fadiga e falta de disposição há cerca de dois meses..." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
           {step === 6 && <><QuestionHeading eyebrow="Queixa principal" title="Gostaria de acrescentar algum detalhe?" hint="Conte quando começou, o que piora ou melhora e como isso afeta sua rotina." /><Textarea autoFocus value={data.complaintDetails} onChange={(event) => update("complaintDetails", event.target.value)} placeholder="Escreva aqui. Se preferir, pode deixar em branco." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
-          {step === 7 && <><QuestionHeading eyebrow="Como você se sente" title="Que nota representa seu estado atual?" hint="Pense no conjunto das dores e queixas que descreveu." /><ScorePicker value={data.complaintScore} onChange={(score) => update("complaintScore", score)} /><SkipButton selected={data.complaintSkipped} onClick={() => { update("complaintSkipped", !data.complaintSkipped); update("complaintScore", null); }} /></>}
+          {step === 7 && <><QuestionHeading eyebrow="Como você se sente" title="Que nota representa seu estado atual?" hint="Pense no conjunto das dores e queixas que descreveu." /><ScorePicker value={data.complaintScore} onChange={(score) => update("complaintScore", score)} /></>}
 
           {currentImprovement && (() => {
             const answer = data.improvements[currentImprovement.key];
