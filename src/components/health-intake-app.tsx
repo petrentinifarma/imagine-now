@@ -306,7 +306,7 @@ export function HealthIntakeApp() {
           {isTransition && (
             <div className="overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-app">
               <div className="relative h-56 overflow-hidden sm:h-80">
-                <img src={jornadaCriativa} alt="Ilustração de uma pessoa de olhos fechados imaginando algo bom" loading="lazy" width={1024} height={1280} className="h-full w-full object-cover" />
+                <img src={jornadaCriativa} alt="Ilustração de uma pessoa de olhos fechados imaginando algo bom" loading="lazy" width={1024} height={1280} className="h-full w-full origin-center animate-drift object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
                 <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-background/85 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-primary backdrop-blur"><Sparkles className="h-4 w-4" /> Modo criativo ativado</span>
               </div>
