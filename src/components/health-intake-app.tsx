@@ -207,7 +207,10 @@ export function HealthIntakeApp() {
       main_complaint: data.complaint.trim(),
       complaint_details: data.complaintDetails.trim() || null,
       complaint_score: data.complaintSkipped ? null : data.complaintScore,
-      improvement_answers: data.improvements,
+      improvement_answers: {
+        goals: data.improvements,
+        additional_notes: [data.additionalOne, data.additionalTwo].filter(Boolean),
+      },
       pain_average: data.complaintSkipped ? null : data.complaintScore,
       health_average: healthAverage,
     });
