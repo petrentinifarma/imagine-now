@@ -344,7 +344,7 @@ function Review({ data, onEdit }: { data: FormData; onEdit: (step: number) => vo
   return <div><QuestionHeading eyebrow="Quase pronto" title="Revise suas respostas" hint="Confira os dados abaixo. Você pode voltar e corrigir antes de enviar." />
     <div className="space-y-3">
       <ReviewBlock title="Identificação" value={`${data.name} · ${data.age} anos${data.weight ? ` · ${data.weight} kg` : ""}\n${data.profession || "Profissão não informada"} · ${data.phone}`} onClick={() => onEdit(0)} />
-      <ReviewBlock title="Queixa principal" value={`${data.complaint}${data.complaintDetails ? `\n${data.complaintDetails}` : ""}\nNota: ${data.complaintSkipped ? "Não se aplica" : data.complaintScore}`} onClick={() => onEdit(5)} />
+      <ReviewBlock title="Queixa principal" value={`${data.complaint}${data.complaintDetails ? `\n${data.complaintDetails}` : ""}\nNota: ${data.complaintScore}`} onClick={() => onEdit(5)} />
       <ReviewBlock title="Melhorias buscadas" value={`${scored.length} aspectos avaliados · média ${average}\n${improvementItems.filter((item) => data.improvements[item.key].detail).map((item) => item.title).join(" · ") || "Sem observações adicionais"}`} onClick={() => onEdit(8)} />
       {(data.additionalOne || data.additionalTwo) && <ReviewBlock title="Observações finais" value={[data.additionalOne, data.additionalTwo].filter(Boolean).join("\n")} onClick={() => onEdit(15)} />}
     </div>
