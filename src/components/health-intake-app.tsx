@@ -341,14 +341,14 @@ export function HealthIntakeApp() {
 
           {error && <p role="alert" className="mt-5 rounded-lg bg-destructive/10 px-4 py-3 text-base font-semibold text-destructive">{error}</p>}
 
-          <div className={cn("mt-auto flex items-center gap-3 pt-10", isTransition && "sticky bottom-0 -mx-5 border-t border-border/70 bg-background/92 px-5 pb-5 pt-4 backdrop-blur sm:-mx-8 sm:px-8")}>
-            <Button type="button" variant="outline" onClick={() => step === 0 ? setStarted(false) : setStep((current) => current - 1)} className="h-14 w-14 shrink-0 rounded-xl p-0" aria-label="Voltar"><ArrowLeft className="h-5 w-5" /></Button>
-            <Button type="button" onClick={isReview ? submit : next} disabled={submitting} className={cn("h-14 flex-1 rounded-xl text-lg font-bold", isTransition && "bg-accent text-accent-foreground hover:bg-accent/90")}>
-              {submitting ? "Enviando..." : isReview ? "Enviar anamnese" : isTransition ? "SEGUIR" : "Salvar e continuar"}
-              {!submitting && (isReview ? <Check className="h-5 w-5" /> : <ArrowRight className="h-5 w-5" />)}
-            </Button>
-          </div>
         </section>
+        <div className={cn("mt-auto flex items-center gap-3 pt-10", isTransition && "sticky bottom-0 -mx-5 border-t border-border/70 bg-background/92 px-5 pb-5 pt-4 backdrop-blur sm:-mx-8 sm:px-8")}>
+          <Button type="button" variant="outline" onClick={() => step === 0 ? setStarted(false) : setStep((current) => current - 1)} className="h-14 w-14 shrink-0 rounded-xl p-0" aria-label="Voltar"><ArrowLeft className="h-5 w-5" /></Button>
+          <Button type="button" onClick={isReview ? submit : next} disabled={submitting} className={cn("h-14 flex-1 rounded-xl text-lg font-bold", isTransition && "bg-accent text-accent-foreground hover:bg-accent/90")}>
+            {submitting ? "Enviando..." : isReview ? "Enviar anamnese" : isTransition ? "SEGUIR" : "Salvar e continuar"}
+            {!submitting && (isReview ? <Check className="h-5 w-5" /> : <ArrowRight className="h-5 w-5" />)}
+          </Button>
+        </div>
       </div>
     </main>
   );
