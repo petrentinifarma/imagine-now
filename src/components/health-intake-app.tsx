@@ -39,7 +39,6 @@ type FormData = {
   complaint: string;
   complaintDetails: string;
   complaintScore: number | null;
-  complaintSkipped: boolean;
   improvements: Record<ImprovementKey, ImprovementAnswer>;
   additionalOne: string;
   additionalTwo: string;
@@ -66,7 +65,6 @@ const initialData: FormData = {
   complaint: "",
   complaintDetails: "",
   complaintScore: null,
-  complaintSkipped: false,
   improvements: {
     skin: emptyImprovement(),
     memory: emptyImprovement(),
@@ -170,7 +168,7 @@ export function HealthIntakeApp() {
     if (step === 2 && data.weight && (Number(data.weight.replace(",", ".")) <= 0 || Number(data.weight.replace(",", ".")) > 400)) return "Confira o peso informado.";
     if (step === 4 && data.phone.replace(/\D/g, "").length < 8) return "Informe um telefone válido.";
     if (step === 5 && data.complaint.trim().length < 3) return "Conte brevemente o que está incomodando você.";
-    if (step === 7 && !data.complaintSkipped && data.complaintScore === null) return "Escolha uma nota ou marque “Não se aplica”.";
+    if (step === 7 && data.complaintScore === null) return "Escolha uma nota de 0 a 10.";
     const improvementIndex = step - 8;
     if (improvementIndex >= 0 && improvementIndex < improvementItems.length) {
       const item = improvementItems[improvementIndex];
@@ -207,12 +205,12 @@ export function HealthIntakeApp() {
       phone: data.phone.trim(),
       main_complaint: data.complaint.trim(),
       complaint_details: data.complaintDetails.trim() || null,
-      complaint_score: data.complaintSkipped ? null : data.complaintScore,
+      complaint_score: data.complaintScore,
       improvement_answers: {
         goals: data.improvements,
         additional_notes: [data.additionalOne, data.additionalTwo].filter(Boolean),
       },
-      pain_average: data.complaintSkipped ? null : data.complaintScore,
+      pain_average: data.complaintScore,
       health_average: healthAverage,
     });
     setSubmitting(false);
@@ -300,7 +298,7 @@ export function HealthIntakeApp() {
 
           {step === 5 && <><QuestionHeading eyebrow="Queixa principal" title="O que está incomodando você hoje?" hint="Descreva com suas palavras o principal motivo para buscar acompanhamento." /><Textarea autoFocus value={data.complaint} onChange={(event) => update("complaint", event.target.value)} placeholder="Ex.: Sinto fadiga e falta de disposição há cerca de dois meses..." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
           {step === 6 && <><QuestionHeading eyebrow="Queixa principal" title="Gostaria de acrescentar algum detalhe?" hint="Conte quando começou, o que piora ou melhora e como isso afeta sua rotina." /><Textarea autoFocus value={data.complaintDetails} onChange={(event) => update("complaintDetails", event.target.value)} placeholder="Escreva aqui. Se preferir, pode deixar em branco." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
-          {step === 7 && <><QuestionHeading eyebrow="Como você se sente" title="Que nota representa seu estado atual?" hint="Pense no conjunto das dores e queixas que descreveu." /><ScorePicker value={data.complaintScore} onChange={(score) => update("complaintScore", score)} /><SkipButton selected={data.complaintSkipped} onClick={() => { update("complaintSkipped", !data.complaintSkipped); update("complaintScore", null); }} /></>}
+          {step === 7 && <><QuestionHeading eyebrow="Como você se sente" title="Que nota representa seu estado atual?" hint="Pense no conjunto das dores e queixas que descreveu." /><ScorePicker value={data.complaintScore} onChange={(score) => update("complaintScore", score)} /></>}
 
           {currentImprovement && (() => {
             const answer = data.improvements[currentImprovement.key];
@@ -346,7 +344,7 @@ function Review({ data, onEdit }: { data: FormData; onEdit: (step: number) => vo
   return <div><QuestionHeading eyebrow="Quase pronto" title="Revise suas respostas" hint="Confira os dados abaixo. Você pode voltar e corrigir antes de enviar." />
     <div className="space-y-3">
       <ReviewBlock title="Identificação" value={`${data.name} · ${data.age} anos${data.weight ? ` · ${data.weight} kg` : ""}\n${data.profession || "Profissão não informada"} · ${data.phone}`} onClick={() => onEdit(0)} />
-      <ReviewBlock title="Queixa principal" value={`${data.complaint}${data.complaintDetails ? `\n${data.complaintDetails}` : ""}\nNota: ${data.complaintSkipped ? "Não se aplica" : data.complaintScore}`} onClick={() => onEdit(5)} />
+      <ReviewBlock title="Queixa principal" value={`${data.complaint}${data.complaintDetails ? `\n${data.complaintDetails}` : ""}\nNota: ${data.complaintScore}`} onClick={() => onEdit(5)} />
       <ReviewBlock title="Melhorias buscadas" value={`${scored.length} aspectos avaliados · média ${average}\n${improvementItems.filter((item) => data.improvements[item.key].detail).map((item) => item.title).join(" · ") || "Sem observações adicionais"}`} onClick={() => onEdit(8)} />
       {(data.additionalOne || data.additionalTwo) && <ReviewBlock title="Observações finais" value={[data.additionalOne, data.additionalTwo].filter(Boolean).join("\n")} onClick={() => onEdit(15)} />}
     </div>
