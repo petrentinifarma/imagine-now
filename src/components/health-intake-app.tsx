@@ -304,22 +304,22 @@ export function HealthIntakeApp() {
           {step === 7 && <><QuestionHeading eyebrow="Como você se sente" title="Que nota representa seu estado atual?" hint="Pense no conjunto das dores e queixas que descreveu." /><ScorePicker value={data.complaintScore} onChange={(score) => update("complaintScore", score)} /></>}
 
           {isTransition && (
-            <div className="overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-app">
-              <div className="relative h-56 overflow-hidden sm:h-80">
+            <div className="overflow-hidden rounded-[1.5rem] border border-border bg-card shadow-app">
+              <div className="relative h-40 overflow-hidden sm:h-72">
                 <img src={jornadaCriativa} alt="Ilustração de uma pessoa de olhos fechados imaginando algo bom" loading="lazy" width={1024} height={1280} className="h-full w-full origin-center animate-drift object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
-                <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-background/85 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-primary backdrop-blur"><Sparkles className="h-4 w-4" /> Modo criativo ativado</span>
+                <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-background/85 px-3 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-primary backdrop-blur"><Sparkles className="h-3.5 w-3.5" /> Modo criativo ativado</span>
               </div>
-              <div className="px-6 pb-1 pt-2 sm:px-9">
-                <p className="font-display text-2xl leading-snug text-foreground sm:text-[1.75rem]">Eu quero que você me conte o que você busca de melhoria na sua vida.</p>
-                <p className="mt-7 flex items-start gap-2 text-base font-bold uppercase tracking-wide text-primary"><Eye className="mt-0.5 h-5 w-5 shrink-0" /> Feche o olho por um segundo e pense:</p>
-                <div className="mt-4 rounded-2xl border-2 border-dashed border-accent bg-accent/10 p-5 sm:p-6">
-                  <p className="font-display text-3xl leading-tight text-foreground sm:text-4xl">EU SERIA MAIS FELIZ SE:</p>
-                  <p className="mt-4 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground"><span className="flex gap-1.5"><span className="h-2 w-2 animate-pulse rounded-full bg-accent" /><span className="h-2 w-2 animate-pulse rounded-full bg-accent [animation-delay:150ms]" /><span className="h-2 w-2 animate-pulse rounded-full bg-accent [animation-delay:300ms]" /></span> complete só na sua cabeça</p>
+              <div className="px-5 pb-1 pt-1 sm:px-9">
+                <p className="font-display text-xl leading-snug text-foreground sm:text-[1.75rem]">Eu quero que você me conte o que você busca de melhoria na sua vida.</p>
+                <p className="mt-5 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-primary"><Eye className="h-4 w-4 shrink-0" /> Feche o olho por um segundo e pense:</p>
+                <div className="mt-3 rounded-2xl border-2 border-dashed border-accent bg-accent/10 p-4 sm:p-6">
+                  <p className="font-display text-2xl leading-tight text-foreground sm:text-4xl">EU SERIA MAIS FELIZ SE:</p>
+                  <p className="mt-3 flex items-center gap-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-muted-foreground"><span className="flex gap-1.5"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" /><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent [animation-delay:150ms]" /><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent [animation-delay:300ms]" /></span> complete só na sua cabeça</p>
                 </div>
-                <p className="mt-7 text-lg leading-relaxed text-muted-foreground">Reflita alguns momentos nisso depois é só passar que colocamos alguns dos principais pontos para te ajudar a lembrar (nenhuma das próximas é obrigatória, se não fizer sentido para você, só pular no botão na parte mais baixa), mas você terá como inserir novos:</p>
-                <p className="mt-8 font-display text-3xl leading-snug text-primary sm:text-4xl">Vamos para a jornada da saúde?!</p>
-                <p className="mt-6 text-sm font-bold uppercase tracking-[0.16em] text-muted-foreground">Para seguir clique abaixo</p>
+                <p className="mt-5 text-base leading-relaxed text-muted-foreground">Reflita alguns momentos nisso depois é só passar que colocamos alguns dos principais pontos para te ajudar a lembrar (nenhuma das próximas é obrigatória, se não fizer sentido para você, só pular no botão na parte mais baixa), mas você terá como inserir novos:</p>
+                <p className="mt-5 font-display text-2xl leading-snug text-primary sm:text-4xl">Vamos para a jornada da saúde?!</p>
+                <p className="mt-4 text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">Para seguir clique abaixo</p>
               </div>
             </div>
           )}
