@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Check,
   CheckCircle2,
+  Eye,
   HeartPulse,
   Leaf,
   LockKeyhole,
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 
 import logoAsset from "@/assets/logo-dr-pedro-trentini.png.asset.json";
+import jornadaCriativa from "@/assets/jornada-criativa.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -169,7 +171,7 @@ export function HealthIntakeApp() {
     if (step === 4 && data.phone.replace(/\D/g, "").length < 8) return "Informe um telefone válido.";
     if (step === 5 && data.complaint.trim().length < 3) return "Conte brevemente o que está incomodando você.";
     if (step === 7 && data.complaintScore === null) return "Escolha uma nota de 0 a 10.";
-    const improvementIndex = step - 8;
+    const improvementIndex = step - 9;
     if (improvementIndex >= 0 && improvementIndex < improvementItems.length) {
       const item = improvementItems[improvementIndex];
       if (!item) return "";
@@ -268,9 +270,10 @@ export function HealthIntakeApp() {
     );
   }
 
-  const reviewStep = 8 + improvementItems.length + 2;
+  const reviewStep = 9 + improvementItems.length + 2;
   const isReview = step === reviewStep;
-  const improvementIndex = step - 8;
+  const isTransition = step === 8;
+  const improvementIndex = step - 9;
   const currentImprovement = improvementIndex >= 0 && improvementIndex < improvementItems.length ? improvementItems[improvementIndex] : null;
   const currentIdentification = step < screens.length ? screens[step] : null;
 
@@ -283,7 +286,7 @@ export function HealthIntakeApp() {
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground"><Leaf className="h-5 w-5" /></div>
               <div className="min-w-0"><p className="truncate text-sm font-bold text-foreground">Dr. Pedro Trentini</p><p className="truncate text-xs text-muted-foreground">Anamnese inicial</p></div>
             </div>
-            <span className="text-sm font-bold text-primary">{isReview ? "Revisão" : `${questionNumber} de ${totalQuestions}`}</span>
+            <span className="text-sm font-bold text-primary">{isReview ? "Revisão" : isTransition ? "Pausa criativa" : `${questionNumber} de ${totalQuestions}`}</span>
           </div>
           <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-accent transition-[width] duration-500" style={{ width: `${isReview ? 100 : progress}%` }} /></div>
         </div>
@@ -300,6 +303,27 @@ export function HealthIntakeApp() {
           {step === 6 && <><QuestionHeading eyebrow="Queixa principal" title="Gostaria de acrescentar algum detalhe?" hint="Conte quando começou, o que piora ou melhora e como isso afeta sua rotina." /><Textarea autoFocus value={data.complaintDetails} onChange={(event) => update("complaintDetails", event.target.value)} placeholder="Escreva aqui. Se preferir, pode deixar em branco." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
           {step === 7 && <><QuestionHeading eyebrow="Como você se sente" title="Que nota representa seu estado atual?" hint="Pense no conjunto das dores e queixas que descreveu." /><ScorePicker value={data.complaintScore} onChange={(score) => update("complaintScore", score)} /></>}
 
+          {isTransition && (
+            <div className="overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-app">
+              <div className="relative h-56 overflow-hidden sm:h-80">
+                <img src={jornadaCriativa} alt="Ilustração de uma pessoa de olhos fechados imaginando algo bom" loading="lazy" width={1024} height={1280} className="h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+                <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-background/85 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-primary backdrop-blur"><Sparkles className="h-4 w-4" /> Modo criativo ativado</span>
+              </div>
+              <div className="px-6 pb-1 pt-2 sm:px-9">
+                <p className="font-display text-2xl leading-snug text-foreground sm:text-[1.75rem]">Eu quero que você me conte o que você busca de melhoria na sua vida.</p>
+                <p className="mt-7 flex items-start gap-2 text-base font-bold uppercase tracking-wide text-primary"><Eye className="mt-0.5 h-5 w-5 shrink-0" /> Feche o olho por um segundo e pense:</p>
+                <div className="mt-4 rounded-2xl border-2 border-dashed border-accent bg-accent/10 p-5 sm:p-6">
+                  <p className="font-display text-3xl leading-tight text-foreground sm:text-4xl">EU SERIA MAIS FELIZ SE:</p>
+                  <p className="mt-4 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground"><span className="flex gap-1.5"><span className="h-2 w-2 animate-pulse rounded-full bg-accent" /><span className="h-2 w-2 animate-pulse rounded-full bg-accent [animation-delay:150ms]" /><span className="h-2 w-2 animate-pulse rounded-full bg-accent [animation-delay:300ms]" /></span> complete só na sua cabeça</p>
+                </div>
+                <p className="mt-7 text-lg leading-relaxed text-muted-foreground">Reflita alguns momentos nisso depois é só passar que colocamos alguns dos principais pontos para te ajudar a lembrar (nenhuma das próximas é obrigatória, se não fizer sentido para você, só pular no botão na parte mais baixa), mas você terá como inserir novos:</p>
+                <p className="mt-8 font-display text-3xl leading-snug text-primary sm:text-4xl">Vamos para a jornada da saúde?!</p>
+                <p className="mt-6 text-sm font-bold uppercase tracking-[0.16em] text-muted-foreground">Para seguir clique abaixo</p>
+              </div>
+            </div>
+          )}
+
           {currentImprovement && (() => {
             const answer = data.improvements[currentImprovement.key];
             return <><QuestionHeading eyebrow="Melhorias que busco" title={currentImprovement.title} hint={currentImprovement.prompt} />
@@ -310,8 +334,8 @@ export function HealthIntakeApp() {
             </>;
           })()}
 
-          {step === 15 && <><QuestionHeading eyebrow="Para completar" title="Existe outra melhoria que você busca?" hint="Este espaço é seu. Conte o que ainda não apareceu nas perguntas." /><Textarea autoFocus value={data.additionalOne} onChange={(event) => update("additionalOne", event.target.value)} placeholder="Escreva aqui, se desejar..." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
-          {step === 16 && <><QuestionHeading eyebrow="Última pergunta" title="Há algo mais que gostaria de acrescentar?" hint="Inclua qualquer informação que considere importante para seu cuidado." /><Textarea autoFocus value={data.additionalTwo} onChange={(event) => update("additionalTwo", event.target.value)} placeholder="Escreva aqui, se desejar..." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
+          {step === 16 && <><QuestionHeading eyebrow="Para completar" title="Existe outra melhoria que você busca?" hint="Este espaço é seu. Conte o que ainda não apareceu nas perguntas." /><Textarea autoFocus value={data.additionalOne} onChange={(event) => update("additionalOne", event.target.value)} placeholder="Escreva aqui, se desejar..." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
+          {step === 17 && <><QuestionHeading eyebrow="Última pergunta" title="Há algo mais que gostaria de acrescentar?" hint="Inclua qualquer informação que considere importante para seu cuidado." /><Textarea autoFocus value={data.additionalTwo} onChange={(event) => update("additionalTwo", event.target.value)} placeholder="Escreva aqui, se desejar..." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
 
           {isReview && <Review data={data} onEdit={setStep} />}
 
@@ -319,8 +343,8 @@ export function HealthIntakeApp() {
 
           <div className="mt-auto flex items-center gap-3 pt-10">
             <Button type="button" variant="outline" onClick={() => step === 0 ? setStarted(false) : setStep((current) => current - 1)} className="h-14 w-14 shrink-0 rounded-xl p-0" aria-label="Voltar"><ArrowLeft className="h-5 w-5" /></Button>
-            <Button type="button" onClick={isReview ? submit : next} disabled={submitting} className="h-14 flex-1 rounded-xl text-lg font-bold">
-              {submitting ? "Enviando..." : isReview ? "Enviar anamnese" : "Salvar e continuar"}
+            <Button type="button" onClick={isReview ? submit : next} disabled={submitting} className={cn("h-14 flex-1 rounded-xl text-lg font-bold", isTransition && "bg-accent text-accent-foreground hover:bg-accent/90")}>
+              {submitting ? "Enviando..." : isReview ? "Enviar anamnese" : isTransition ? "SEGUIR" : "Salvar e continuar"}
               {!submitting && (isReview ? <Check className="h-5 w-5" /> : <ArrowRight className="h-5 w-5" />)}
             </Button>
           </div>
@@ -345,8 +369,8 @@ function Review({ data, onEdit }: { data: FormData; onEdit: (step: number) => vo
     <div className="space-y-3">
       <ReviewBlock title="Identificação" value={`${data.name} · ${data.age} anos${data.weight ? ` · ${data.weight} kg` : ""}\n${data.profession || "Profissão não informada"} · ${data.phone}`} onClick={() => onEdit(0)} />
       <ReviewBlock title="Queixa principal" value={`${data.complaint}${data.complaintDetails ? `\n${data.complaintDetails}` : ""}\nNota: ${data.complaintScore}`} onClick={() => onEdit(5)} />
-      <ReviewBlock title="Melhorias buscadas" value={`${scored.length} aspectos avaliados · média ${average}\n${improvementItems.filter((item) => data.improvements[item.key].detail).map((item) => item.title).join(" · ") || "Sem observações adicionais"}`} onClick={() => onEdit(8)} />
-      {(data.additionalOne || data.additionalTwo) && <ReviewBlock title="Observações finais" value={[data.additionalOne, data.additionalTwo].filter(Boolean).join("\n")} onClick={() => onEdit(15)} />}
+      <ReviewBlock title="Melhorias buscadas" value={`${scored.length} aspectos avaliados · média ${average}\n${improvementItems.filter((item) => data.improvements[item.key].detail).map((item) => item.title).join(" · ") || "Sem observações adicionais"}`} onClick={() => onEdit(9)} />
+      {(data.additionalOne || data.additionalTwo) && <ReviewBlock title="Observações finais" value={[data.additionalOne, data.additionalTwo].filter(Boolean).join("\n")} onClick={() => onEdit(16)} />}
     </div>
     <div className="mt-6 flex items-start gap-3 rounded-xl bg-secondary p-4"><LockKeyhole className="mt-0.5 h-5 w-5 shrink-0 text-primary" /><p className="text-sm leading-relaxed text-secondary-foreground">Ao enviar, suas respostas ficarão disponíveis com segurança para análise profissional.</p></div>
   </div>;
