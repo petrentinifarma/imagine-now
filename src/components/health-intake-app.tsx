@@ -174,6 +174,7 @@ export function HealthIntakeApp() {
     const improvementIndex = step - 8;
     if (improvementIndex >= 0 && improvementIndex < improvementItems.length) {
       const item = improvementItems[improvementIndex];
+      if (!item) return "";
       const answer = data.improvements[item.key];
       if (!answer.skipped && answer.score === null) return "Escolha uma nota ou marque “Não se aplica”.";
     }
@@ -273,6 +274,7 @@ export function HealthIntakeApp() {
   const isReview = step === reviewStep;
   const improvementIndex = step - 8;
   const currentImprovement = improvementIndex >= 0 && improvementIndex < improvementItems.length ? improvementItems[improvementIndex] : null;
+  const currentIdentification = step < screens.length ? screens[step] : null;
 
   return (
     <main className="min-h-dvh bg-background">
@@ -291,13 +293,10 @@ export function HealthIntakeApp() {
 
       <div className="mx-auto flex min-h-[calc(100dvh-97px)] max-w-3xl flex-col px-5 py-8 sm:px-8 sm:py-12">
         <section key={step} className="animate-fade-in flex flex-1 flex-col">
-          {step < screens.length && (() => {
-            const screen = screens[step];
-            return <>
-              <QuestionHeading eyebrow={screen.eyebrow} title={screen.title} hint={screen.hint} />
-              <Input autoFocus inputMode={screen.type === "number" ? "decimal" : screen.type === "tel" ? "tel" : "text"} type={screen.type} placeholder={screen.placeholder} value={data[screen.key]} onChange={(event) => update(screen.key, event.target.value)} className="h-16 rounded-xl border-2 px-5 text-xl shadow-none placeholder:text-base md:text-xl" />
-            </>;
-          })()}
+          {currentIdentification && <>
+            <QuestionHeading eyebrow={currentIdentification.eyebrow} title={currentIdentification.title} hint={currentIdentification.hint} />
+            <Input autoFocus inputMode={currentIdentification.type === "number" ? "decimal" : currentIdentification.type === "tel" ? "tel" : "text"} type={currentIdentification.type} placeholder={currentIdentification.placeholder} value={data[currentIdentification.key]} onChange={(event) => update(currentIdentification.key, event.target.value)} className="h-16 rounded-xl border-2 px-5 text-xl shadow-none placeholder:text-base md:text-xl" />
+          </>}
 
           {step === 5 && <><QuestionHeading eyebrow="Queixa principal" title="O que está incomodando você hoje?" hint="Descreva com suas palavras o principal motivo para buscar acompanhamento." /><Textarea autoFocus value={data.complaint} onChange={(event) => update("complaint", event.target.value)} placeholder="Ex.: Sinto fadiga e falta de disposição há cerca de dois meses..." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
           {step === 6 && <><QuestionHeading eyebrow="Queixa principal" title="Gostaria de acrescentar algum detalhe?" hint="Conte quando começou, o que piora ou melhora e como isso afeta sua rotina." /><Textarea autoFocus value={data.complaintDetails} onChange={(event) => update("complaintDetails", event.target.value)} placeholder="Escreva aqui. Se preferir, pode deixar em branco." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
