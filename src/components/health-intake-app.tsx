@@ -168,7 +168,7 @@ export function HealthIntakeApp() {
     if (step === 2 && data.weight && (Number(data.weight.replace(",", ".")) <= 0 || Number(data.weight.replace(",", ".")) > 400)) return "Confira o peso informado.";
     if (step === 4 && data.phone.replace(/\D/g, "").length < 8) return "Informe um telefone válido.";
     if (step === 5 && data.complaint.trim().length < 3) return "Conte brevemente o que está incomodando você.";
-    if (step === 7 && !data.complaintSkipped && data.complaintScore === null) return "Escolha uma nota ou marque “Não se aplica”.";
+    if (step === 7 && data.complaintScore === null) return "Escolha uma nota de 0 a 10.";
     const improvementIndex = step - 8;
     if (improvementIndex >= 0 && improvementIndex < improvementItems.length) {
       const item = improvementItems[improvementIndex];
