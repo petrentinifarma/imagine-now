@@ -41,6 +41,7 @@ type FormData = {
   complaint: string;
   complaintDetails: string;
   complaintScore: number | null;
+  expectations: string;
   improvements: Record<ImprovementKey, ImprovementAnswer>;
   additionalOne: string;
   additionalTwo: string;
@@ -67,6 +68,7 @@ const initialData: FormData = {
   complaint: "",
   complaintDetails: "",
   complaintScore: null,
+  expectations: "",
   improvements: {
     skin: emptyImprovement(),
     memory: emptyImprovement(),
@@ -80,8 +82,8 @@ const initialData: FormData = {
   additionalTwo: "",
 };
 
-const STORAGE_KEY = "anamnese-pedro-trentini-v1";
-const totalQuestions = 5 + 3 + improvementItems.length + 2;
+const STORAGE_KEY = "anamnese-pedro-trentini-v2";
+const totalQuestions = 5 + 4 + improvementItems.length + 2;
 
 function ScorePicker({ value, onChange }: { value: number | null; onChange: (value: number) => void }) {
   return (
@@ -170,8 +172,8 @@ export function HealthIntakeApp() {
     if (step === 2 && data.weight && (Number(data.weight.replace(",", ".")) <= 0 || Number(data.weight.replace(",", ".")) > 400)) return "Confira o peso informado.";
     if (step === 4 && data.phone.replace(/\D/g, "").length < 8) return "Informe um telefone válido.";
     if (step === 5 && data.complaint.trim().length < 3) return "Conte brevemente o que está incomodando você.";
-    if (step === 7 && data.complaintScore === null) return "Escolha uma nota de 0 a 10.";
-    const improvementIndex = step - 9;
+    if (step === 8 && data.complaintScore === null) return "Escolha uma nota de 0 a 10.";
+    const improvementIndex = step - 10;
     if (improvementIndex >= 0 && improvementIndex < improvementItems.length) {
       const item = improvementItems[improvementIndex];
       if (!item) return "";
@@ -210,6 +212,7 @@ export function HealthIntakeApp() {
       complaint_score: data.complaintScore,
       improvement_answers: {
         goals: data.improvements,
+        expectations: data.expectations.trim() || null,
         additional_notes: [data.additionalOne, data.additionalTwo].filter(Boolean),
       },
       pain_average: data.complaintScore,
@@ -236,12 +239,11 @@ export function HealthIntakeApp() {
             <div className="mb-7 inline-flex w-fit items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm font-bold uppercase text-secondary-foreground">
               <HeartPulse className="h-4 w-4" /> Anamnese inicial
             </div>
-            <h1 className="font-display text-4xl leading-tight text-foreground sm:text-5xl">Vamos conhecer você por inteiro.</h1>
-            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">Suas respostas ajudam a tornar o cuidado mais individualizado, seguro e alinhado ao que importa na sua vida.</p>
+            <h1 className="font-display text-4xl leading-tight text-foreground sm:text-5xl">Vamos nos melhor.</h1>
+            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">Por isso preparei essas perguntas para saber como está sua saúde atualmente. Suas respostas são essenciais para eu pré-avaliar seu caso, ver suas expectativas e principalmente se o tratamento que ofereço será adequado para você.</p>
             <div className="mt-8 grid gap-3 text-base font-medium text-foreground">
-              <div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 shrink-0 text-primary" /> Uma pergunta de cada vez</div>
-              <div className="flex items-center gap-3"><ShieldCheck className="h-5 w-5 shrink-0 text-primary" /> Informações tratadas com cuidado</div>
-              <div className="flex items-center gap-3"><Sparkles className="h-5 w-5 shrink-0 text-primary" /> Cerca de 8 minutos</div>
+              <div className="flex items-center gap-3"><ShieldCheck className="h-5 w-5 shrink-0 text-primary" /> Toda informação aqui é sigilosa</div>
+              <div className="flex items-center gap-3"><Sparkles className="h-5 w-5 shrink-0 text-primary" /> Cerca de 5 minutos</div>
             </div>
             <Button onClick={() => setStarted(true)} className="mt-10 h-14 w-full rounded-xl text-lg font-bold sm:w-fit sm:px-8">
               Começar agora <ArrowRight className="h-5 w-5" />
@@ -270,10 +272,10 @@ export function HealthIntakeApp() {
     );
   }
 
-  const reviewStep = 9 + improvementItems.length + 2;
+  const reviewStep = 10 + improvementItems.length + 2;
   const isReview = step === reviewStep;
-  const isTransition = step === 8;
-  const improvementIndex = step - 9;
+  const isTransition = step === 9;
+  const improvementIndex = step - 10;
   const currentImprovement = improvementIndex >= 0 && improvementIndex < improvementItems.length ? improvementItems[improvementIndex] : null;
   const currentIdentification = step < screens.length ? screens[step] : null;
 
@@ -301,7 +303,8 @@ export function HealthIntakeApp() {
 
           {step === 5 && <><QuestionHeading eyebrow="Queixa principal" title="O que está incomodando você hoje?" hint="Descreva com suas palavras o principal motivo para buscar acompanhamento." /><Textarea autoFocus value={data.complaint} onChange={(event) => update("complaint", event.target.value)} placeholder="Ex.: Sinto fadiga e falta de disposição há cerca de dois meses..." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
           {step === 6 && <><QuestionHeading eyebrow="Queixa principal" title="Gostaria de acrescentar algum detalhe?" hint="Conte quando começou, o que piora ou melhora e como isso afeta sua rotina." /><Textarea autoFocus value={data.complaintDetails} onChange={(event) => update("complaintDetails", event.target.value)} placeholder="Escreva aqui. Se preferir, pode deixar em branco." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
-          {step === 7 && <><QuestionHeading eyebrow="Como você se sente" title="Que nota representa seu estado atual?" hint="Pense no conjunto das dores e queixas que descreveu." /><ScorePicker value={data.complaintScore} onChange={(score) => update("complaintScore", score)} /></>}
+          {step === 7 && <><QuestionHeading eyebrow="Expectativas" title="O que você espera nesse tratamento? Quais são suas expectativas?" hint="Detalhe o máximo possível (resultado, tempo, mudança de, perder peso, etc.) por gentileza, com sinceridade pois aqui não tem julgamento." /><Textarea autoFocus value={data.expectations} onChange={(event) => update("expectations", event.target.value)} placeholder="Escreva aqui, com sinceridade..." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
+          {step === 8 && <><QuestionHeading eyebrow="Como você se sente" title="Que nota representa seu estado atual?" hint="Pense no conjunto das dores e queixas que descreveu." /><ScorePicker value={data.complaintScore} onChange={(score) => update("complaintScore", score)} /></>}
 
           {isTransition && (
             <div className="overflow-hidden rounded-[1.5rem] border border-border bg-card shadow-app">
@@ -334,8 +337,8 @@ export function HealthIntakeApp() {
             </>;
           })()}
 
-          {step === 16 && <><QuestionHeading eyebrow="Para completar" title="Existe outra melhoria que você busca?" hint="Este espaço é seu. Conte o que ainda não apareceu nas perguntas." /><Textarea autoFocus value={data.additionalOne} onChange={(event) => update("additionalOne", event.target.value)} placeholder="Escreva aqui, se desejar..." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
-          {step === 17 && <><QuestionHeading eyebrow="Última pergunta" title="Há algo mais que gostaria de acrescentar?" hint="Inclua qualquer informação que considere importante para seu cuidado." /><Textarea autoFocus value={data.additionalTwo} onChange={(event) => update("additionalTwo", event.target.value)} placeholder="Escreva aqui, se desejar..." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
+          {step === 17 && <><QuestionHeading eyebrow="Para completar" title="Existe outra melhoria que você busca?" hint="Este espaço é seu. Conte o que ainda não apareceu nas perguntas." /><Textarea autoFocus value={data.additionalOne} onChange={(event) => update("additionalOne", event.target.value)} placeholder="Escreva aqui, se desejar..." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
+          {step === 18 && <><QuestionHeading eyebrow="Última pergunta" title="Há algo mais que gostaria de acrescentar?" hint="Inclua qualquer informação que considere importante para seu cuidado." /><Textarea autoFocus value={data.additionalTwo} onChange={(event) => update("additionalTwo", event.target.value)} placeholder="Escreva aqui, se desejar..." className="min-h-52 rounded-xl border-2 p-5 text-xl leading-relaxed shadow-none md:text-xl" /></>}
 
           {isReview && <Review data={data} onEdit={setStep} />}
 
@@ -369,8 +372,9 @@ function Review({ data, onEdit }: { data: FormData; onEdit: (step: number) => vo
     <div className="space-y-3">
       <ReviewBlock title="Identificação" value={`${data.name} · ${data.age} anos${data.weight ? ` · ${data.weight} kg` : ""}\n${data.profession || "Profissão não informada"} · ${data.phone}`} onClick={() => onEdit(0)} />
       <ReviewBlock title="Queixa principal" value={`${data.complaint}${data.complaintDetails ? `\n${data.complaintDetails}` : ""}\nNota: ${data.complaintScore}`} onClick={() => onEdit(5)} />
-      <ReviewBlock title="Melhorias buscadas" value={`${scored.length} aspectos avaliados · média ${average}\n${improvementItems.filter((item) => data.improvements[item.key].detail).map((item) => item.title).join(" · ") || "Sem observações adicionais"}`} onClick={() => onEdit(9)} />
-      {(data.additionalOne || data.additionalTwo) && <ReviewBlock title="Observações finais" value={[data.additionalOne, data.additionalTwo].filter(Boolean).join("\n")} onClick={() => onEdit(16)} />}
+      {data.expectations && <ReviewBlock title="Expectativas" value={data.expectations} onClick={() => onEdit(7)} />}
+      <ReviewBlock title="Melhorias buscadas" value={`${scored.length} aspectos avaliados · média ${average}\n${improvementItems.filter((item) => data.improvements[item.key].detail).map((item) => item.title).join(" · ") || "Sem observações adicionais"}`} onClick={() => onEdit(10)} />
+      {(data.additionalOne || data.additionalTwo) && <ReviewBlock title="Observações finais" value={[data.additionalOne, data.additionalTwo].filter(Boolean).join("\n")} onClick={() => onEdit(17)} />}
     </div>
     <div className="mt-6 flex items-start gap-3 rounded-xl bg-secondary p-4"><LockKeyhole className="mt-0.5 h-5 w-5 shrink-0 text-primary" /><p className="text-sm leading-relaxed text-secondary-foreground">Ao enviar, suas respostas ficarão disponíveis com segurança para análise profissional.</p></div>
   </div>;
