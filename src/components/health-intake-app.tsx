@@ -39,7 +39,6 @@ type FormData = {
   complaint: string;
   complaintDetails: string;
   complaintScore: number | null;
-  complaintSkipped: boolean;
   improvements: Record<ImprovementKey, ImprovementAnswer>;
   additionalOne: string;
   additionalTwo: string;
@@ -66,7 +65,6 @@ const initialData: FormData = {
   complaint: "",
   complaintDetails: "",
   complaintScore: null,
-  complaintSkipped: false,
   improvements: {
     skin: emptyImprovement(),
     memory: emptyImprovement(),
