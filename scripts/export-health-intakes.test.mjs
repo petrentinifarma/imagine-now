@@ -97,9 +97,19 @@ test("agrupa avaliações do mesmo paciente e calcula evolução", () => {
   );
   assert.equal(mariaEvolution[1].complaint_delta, -3);
   assert.equal(mariaEvolution[1].health_delta, 2);
+
+  const patientSheet = buildWorkbookModel([first, second], new Date("2026-03-10T15:00:00.000Z"))[0];
+  assert.equal(
+    patientSheet.rows.find((row) => row.field === "Número de avaliações reunidas").value,
+    2,
+  );
+  assert.equal(
+    patientSheet.rows.find((row) => row.field === "Nota atual da queixa (0–10)").value,
+    5,
+  );
 });
 
-test("gera um XLSX editável com quatro abas e texto do paciente sem fórmula", () => {
+test("gera um XLSX editável com ficha vertical e texto do paciente sem fórmula", () => {
   const formulaLikeText = '=HYPERLINK("https://example.invalid","abrir")';
   const record = assessment({ main_complaint: formulaLikeText });
   const generatedAt = new Date("2026-10-04T15:30:00.000Z");
@@ -109,22 +119,33 @@ test("gera um XLSX editável com quatro abas e texto do paciente sem fórmula", 
   const entries = storedZipEntries(workbook);
   assert.ok(entries.has("[Content_Types].xml"));
   assert.ok(entries.has("xl/styles.xml"));
-  assert.equal([...entries.keys()].filter((name) => name.startsWith("xl/worksheets/")).length, 4);
+  assert.equal([...entries.keys()].filter((name) => name.startsWith("xl/worksheets/")).length, 5);
+  assert.match(entries.get("xl/workbook.xml"), /name="Ficha"/);
   assert.match(entries.get("xl/workbook.xml"), /name="Resumo"/);
   assert.match(entries.get("xl/workbook.xml"), /name="Evolução"/);
   assert.match(entries.get("xl/workbook.xml"), /name="Avaliações"/);
   assert.match(entries.get("xl/workbook.xml"), /name="Leia-me"/);
 
-  const rawSheet = entries.get("xl/worksheets/sheet3.xml");
+  const mobileSheet = entries.get("xl/worksheets/sheet1.xml");
+  assert.ok(mobileSheet.includes("Ficha atual do paciente"));
+  assert.ok(mobileSheet.includes("Ter mais disposição"));
+  assert.ok(mobileSheet.includes('activeCell="A5"'));
+
+  const rawSheet = entries.get("xl/worksheets/sheet4.xml");
   assert.ok(rawSheet.includes("=HYPERLINK("));
   assert.ok(!rawSheet.includes("<f>HYPERLINK("));
   assert.ok(rawSheet.includes('t="inlineStr"'));
 
   const model = buildWorkbookModel([record], generatedAt);
   assert.equal(
-    model[3].rows
+    model[4].rows
       .find((row) => row.topic === "Acesso do paciente")
       .guidance.includes("não fica disponível"),
     true,
+  );
+  assert.equal(model[0].name, "Ficha");
+  assert.equal(
+    model[0].rows.find((row) => row.field === "Queixa principal").value,
+    formulaLikeText,
   );
 });

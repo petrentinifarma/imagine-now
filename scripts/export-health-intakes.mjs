@@ -359,11 +359,85 @@ function readmeRows(generatedAt, recordCount) {
   ];
 }
 
+function formattedDate(value) {
+  const date = validDate(value);
+  return date ? date.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }) : "";
+}
+
+function latestPatientRows(records) {
+  const { summaries } = buildExportData(records);
+  const summariesByCode = new Map(summaries.map((summary) => [summary.patient_code, summary]));
+  const groups = new Map();
+
+  for (const record of [...records].sort(
+    (left, right) => dateSortValue(left) - dateSortValue(right),
+  )) {
+    const identity = patientIdentity(record);
+    const group = groups.get(identity.groupingKey) ?? { identity, records: [] };
+    group.records.push(record);
+    groups.set(identity.groupingKey, group);
+  }
+
+  const patientGroups = [...groups.values()].sort((left, right) => {
+    const leftName = normalizeText(left.records.at(-1)?.patient_name);
+    const rightName = normalizeText(right.records.at(-1)?.patient_name);
+    return leftName.localeCompare(rightName, "pt-BR");
+  });
+  const rows = [];
+
+  for (const { identity, records: patientRecords } of patientGroups) {
+    const current = patientRecords.at(-1);
+    const summary = summariesByCode.get(identity.code);
+    const patientName = normalizeText(current.patient_name);
+    const add = (field, value) => rows.push({ patient_name: patientName, field, value });
+
+    add("Código do paciente", identity.code);
+    add("Data da avaliação atual", formattedDate(current.created_at));
+    add("Número de avaliações reunidas", summary?.evaluations ?? patientRecords.length);
+    add("Primeira avaliação", formattedDate(summary?.first_evaluation));
+    add("Paciente", patientName);
+    add("Idade", finiteNumber(current.age));
+    add("Profissão", normalizeText(current.profession));
+    add("Telefone", normalizeText(current.phone));
+    add("Peso atual (kg)", finiteNumber(current.weight_kg));
+    add("Variação do peso desde a primeira (kg)", summary?.weight_change ?? null);
+    add("Queixa principal", normalizeText(current.main_complaint));
+    add("Detalhes da queixa", normalizeText(current.complaint_details));
+    add("Nota atual da queixa (0–10)", finiteNumber(current.complaint_score));
+    add("Variação da queixa desde a primeira", summary?.complaint_change ?? null);
+    add("Média de dor", finiteNumber(current.pain_average));
+    add("Média atual de saúde (0–10)", finiteNumber(current.health_average));
+    add("Variação da saúde desde a primeira", summary?.health_change ?? null);
+    add("Expectativas", expectations(current));
+    add("Observações adicionais", additionalNotes(current).join(" | "));
+
+    for (const [key, label] of IMPROVEMENT_FIELDS) {
+      const answer = goalAnswer(current, key);
+      const skipped = answer.skipped === true;
+      add(`${label} — detalhes`, skipped ? "Não se aplica" : normalizeText(answer.detail));
+      add(`${label} — nota (0–10)`, skipped ? "Não se aplica" : finiteNumber(answer.score));
+    }
+  }
+
+  return rows;
+}
+
 export function buildWorkbookModel(records, generatedAt = new Date()) {
   const { summaries, evolution, raw } = buildExportData(records);
   const generatedLabel = generatedAt.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
 
   return [
+    {
+      name: "Ficha",
+      title: "Ficha atual do paciente",
+      note: "Visualização vertical para celular. Os históricos e comparativos continuam nas demais abas.",
+      columns: [
+        textColumn("Paciente", "patient_name", 28),
+        textColumn("Campo", "field", 34),
+        textColumn("Resposta atual", "value", 72),
+      ],
+      rows: latestPatientRows(records),
+    },
     {
       name: "Resumo",
       title: "Resumo longitudinal por paciente",
@@ -472,7 +546,7 @@ function worksheetXml(sheet) {
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
   <sheetPr><outlinePr summaryBelow="1" summaryRight="1"/><pageSetUpPr fitToPage="1"/></sheetPr>
   <dimension ref="A1:${lastColumn}${lastRow}"/>
-  <sheetViews><sheetView showGridLines="0" workbookViewId="0"><pane ySplit="4" topLeftCell="A5" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>
+  <sheetViews><sheetView showGridLines="0" workbookViewId="0"><pane ySplit="4" topLeftCell="A5" activePane="bottomLeft" state="frozen"/><selection pane="bottomLeft" activeCell="A5" sqref="A5"/></sheetView></sheetViews>
   <sheetFormatPr defaultRowHeight="18"/>
   <cols>${widths}</cols>
   <sheetData>
