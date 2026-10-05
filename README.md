@@ -1,6 +1,6 @@
 # Imagine Now
 
-sim, no prompt está descrito  como imaginei, mas quero que você fique livre para deixar bem atrativo e dinâmico esse app - ele será usado em celulares principalmente
+sim, no prompt está descrito como imaginei, mas quero que você fique livre para deixar bem atrativo e dinâmico esse app - ele será usado em celulares principalmente
 
 This project was built with [Lovable](https://lovable.dev).
 
@@ -22,3 +22,26 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Security and privacy configuration
+
+Apply all SQL migrations in `drizzle/migrations` before deploying. The security
+migration removes direct anonymous inserts and routes submissions through the
+server, where validation, idempotency, a honeypot, and database-backed rate
+limiting are enforced.
+
+Configure these environment variables in the deployment platform:
+
+- `SUPABASE_SERVICE_ROLE_KEY`: server-only Supabase key. Never expose it with a
+  `VITE_` prefix.
+- `VITE_PRIVACY_CONTACT`: the email address or contact channel shown in the
+  privacy notice.
+- `RATE_LIMIT_HASH_SECRET`: optional server-only secret used to pseudonymize
+  request fingerprints. If omitted, the server-only Supabase service key is
+  used as the secret.
+- `VITE_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`: optional but recommended
+  Cloudflare Turnstile keys. Configure both together to enable the challenge.
+
+The browser draft is opt-in, expires after 24 hours, and can be deleted by the
+person at any time. Health responses are never used to produce an automatic
+diagnosis.
