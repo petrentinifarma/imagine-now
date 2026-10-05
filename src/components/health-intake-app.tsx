@@ -485,20 +485,6 @@ export function HealthIntakeApp() {
               </span>
             </label>
 
-            <label className="mt-3 flex cursor-pointer items-start gap-3 rounded-xl bg-secondary/60 p-3 text-sm leading-relaxed text-secondary-foreground">
-              <input
-                type="checkbox"
-                checked={saveDraft}
-                onChange={(event) => setSaveDraft(event.target.checked)}
-                aria-label="Salvar meu progresso neste aparelho"
-                className="mt-0.5 h-5 w-5 shrink-0 accent-primary"
-              />
-              <span>
-                Salvar meu progresso neste aparelho por até 24 horas. Não marque em aparelho
-                compartilhado.
-              </span>
-            </label>
-
             {error && (
               <p
                 role="alert"
