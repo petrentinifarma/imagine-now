@@ -80,3 +80,23 @@ The command reads `VITE_SUPABASE_URL` from the existing `.env` file (or accepts
 `SUPABASE_URL`) and reads the private key from `.env.export.local` or the
 operating system environment. Never expose the service-role key in browser code
 or variables prefixed with `VITE_`.
+
+## Automatic private delivery after submission
+
+After a successful submission, the server creates or updates a workbook for
+that patient and emails the administrator a private download link. The download
+uses the patient's name, for example `Maria da Silva.xlsx`, and the link expires
+after one hour. The patient does not receive the email or access the file.
+
+Configure these server-only deployment secrets:
+
+- `ADMIN_EXPORT_EMAIL`: set to the private administrative destination, such as
+  `owner@example.com`.
+- `RESEND_API_KEY`: API key from the Resend email service.
+- `EXPORT_EMAIL_FROM`: verified sender, for example
+  `Imagine Now <avaliacoes@your-domain.com>`.
+
+The workbook itself is kept in a private Supabase Storage bucket. The email
+contains a short-lived signed link rather than a permanent public attachment.
+If delivery fails, the patient's submission remains saved and can still be
+exported with `npm run export:health-intakes`.

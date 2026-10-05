@@ -1,7 +1,4 @@
 import { createHash } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
 
 import { createClient } from "@supabase/supabase-js";
 
@@ -708,7 +705,7 @@ function defaultOutputPath(date = new Date()) {
     .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
     .replace(" ", "-")
     .replace(/:/g, "");
-  return resolve("private-exports", `anamneses-${stamp}.xlsx`);
+  return `private-exports/anamneses-${stamp}.xlsx`;
 }
 
 function parseArguments(argumentsList) {
@@ -717,7 +714,7 @@ function parseArguments(argumentsList) {
   if (outputIndex >= 0 && !argumentsList[outputIndex + 1]) {
     throw new Error("Informe um caminho após --output.");
   }
-  return { help: false, output: outputIndex >= 0 ? resolve(argumentsList[outputIndex + 1]) : null };
+  return { help: false, output: outputIndex >= 0 ? argumentsList[outputIndex + 1] : null };
 }
 
 function printHelp() {
@@ -757,7 +754,9 @@ export async function runExport(argumentsList = process.argv.slice(2)) {
 
   const generatedAt = new Date();
   const records = await fetchAllHealthIntakes(url, serviceRoleKey);
-  const outputPath = options.output ?? defaultOutputPath(generatedAt);
+  const { mkdir, writeFile } = await import("node:fs/promises");
+  const { dirname, resolve } = await import("node:path");
+  const outputPath = resolve(options.output ?? defaultOutputPath(generatedAt));
   await mkdir(dirname(outputPath), { recursive: true });
   await writeFile(outputPath, createWorkbookBuffer(records, generatedAt));
   console.log(`Exportação concluída: ${records.length} avaliação(ões).`);
@@ -765,8 +764,9 @@ export async function runExport(argumentsList = process.argv.slice(2)) {
   return outputPath;
 }
 
-const isDirectExecution =
-  process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
+const isDirectExecution = process.argv[1]
+  ?.replace(/\\/g, "/")
+  .endsWith("/scripts/export-health-intakes.mjs");
 
 if (isDirectExecution) {
   runExport().catch((error) => {

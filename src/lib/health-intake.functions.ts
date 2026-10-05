@@ -121,5 +121,17 @@ export const submitHealthIntake = createServerFn({ method: "POST" })
       return { ok: false, code: "unavailable" };
     }
 
+    try {
+      const { deliverPatientWorkbook } = await import("@/lib/patient-export.server");
+      await deliverPatientWorkbook({
+        patientName: data.intake.name.trim(),
+        phone: data.intake.phone.trim(),
+      });
+    } catch (deliveryError) {
+      // The health record is already safely stored. A notification problem
+      // must never make the patient retry and accidentally create duplicates.
+      console.error("Private patient export delivery failed", deliveryError);
+    }
+
     return { ok: true };
   });
