@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      health_intake_submission_attempts: {
+        Row: {
+          created_at: string
+          id: string
+          ip_hash: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_hash: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_hash?: string
+        }
+        Relationships: []
+      }
       health_intakes: {
         Row: {
           age: number
@@ -27,7 +45,10 @@ export type Database = {
           pain_average: number | null
           patient_name: string
           phone: string
+          privacy_acknowledged_at: string | null
+          privacy_notice_version: string | null
           profession: string | null
+          request_id: string
           weight_kg: number | null
         }
         Insert: {
@@ -42,7 +63,10 @@ export type Database = {
           pain_average?: number | null
           patient_name: string
           phone: string
+          privacy_acknowledged_at?: string | null
+          privacy_notice_version?: string | null
           profession?: string | null
+          request_id: string
           weight_kg?: number | null
         }
         Update: {
@@ -57,7 +81,10 @@ export type Database = {
           pain_average?: number | null
           patient_name?: string
           phone?: string
+          privacy_acknowledged_at?: string | null
+          privacy_notice_version?: string | null
           profession?: string | null
+          request_id?: string
           weight_kg?: number | null
         }
         Relationships: []
@@ -67,7 +94,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      register_health_intake_attempt: {
+        Args: { p_ip_hash: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
