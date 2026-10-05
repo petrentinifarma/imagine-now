@@ -45,3 +45,38 @@ Configure these environment variables in the deployment platform:
 The browser draft is opt-in, expires after 24 hours, and can be deleted by the
 person at any time. Health responses are never used to produce an automatic
 diagnosis.
+
+## Private Excel export
+
+Patients only fill out and submit the form. They do not receive a copy of their
+answers and have no access to the spreadsheet export.
+
+To generate an editable Excel file with every submitted assessment, create an
+ignored `.env.export.local` file on the administrative computer:
+
+```dotenv
+SUPABASE_SERVICE_ROLE_KEY=your-private-service-role-key
+```
+
+Never place this key in the tracked `.env` file. Then run:
+
+```sh
+npm run export:health-intakes
+```
+
+The file is created in `private-exports/`, which is excluded from Git. It
+contains a summary by patient, a chronological evolution table, the complete
+submitted data, and a usage guide. Assessments are grouped by normalized phone
+number, so a phone change must be reconciled manually before longitudinal
+comparison.
+
+To select another private destination:
+
+```sh
+npm run export:health-intakes -- --output /protected/path/anamneses.xlsx
+```
+
+The command reads `VITE_SUPABASE_URL` from the existing `.env` file (or accepts
+`SUPABASE_URL`) and reads the private key from `.env.export.local` or the
+operating system environment. Never expose the service-role key in browser code
+or variables prefixed with `VITE_`.

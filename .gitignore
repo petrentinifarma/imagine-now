@@ -16,6 +16,9 @@ dist-ssr
 .nitro
 *.local
 
+# Private administrative exports containing health data
+private-exports/
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars

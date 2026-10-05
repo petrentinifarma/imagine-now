@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "vitest run",
+    "test": "vitest run && node --test scripts/*.test.mjs",
+    "export:health-intakes": "node scripts/export-health-intakes.mjs",
     "test:watch": "vitest"
   },
   "overrides": {
