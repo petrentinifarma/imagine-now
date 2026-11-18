@@ -1,0 +1,1 @@
+- [ ] Integração externa por token (aguardando Pedro gerar o token)
