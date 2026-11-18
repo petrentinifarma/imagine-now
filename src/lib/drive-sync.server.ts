@@ -34,7 +34,7 @@ export async function syncWorkbookToDrive(filename: string, workbook: Uint8Array
   const body = new Blob([
     `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n`,
     `--${boundary}\r\nContent-Type: ${XLSX_MIME}\r\n\r\n`,
-    workbook,
+    workbook as BlobPart,
     `\r\n--${boundary}--`,
   ]);
   const url = existing
