@@ -113,6 +113,13 @@ export async function deliverPatientWorkbook(input: {
   const patientFolder = await sha256(normalizedPhone);
   const objectPath = `${patientFolder}/latest.xlsx`;
 
+  try {
+    const { syncWorkbookToDrive } = await import("@/lib/drive-sync.server");
+    await syncWorkbookToDrive(filename, workbook);
+  } catch (error) {
+    console.error("Cópia no Google Drive falhou:", error);
+  }
+
   await ensurePrivateExportBucket();
   const { error: uploadError } = await supabaseAdmin.storage
     .from(EXPORT_BUCKET)
