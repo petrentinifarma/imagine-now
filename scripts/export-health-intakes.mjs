@@ -80,6 +80,18 @@ function additionalNotes(record) {
   return Array.isArray(notes) ? notes.map(normalizeText).filter(Boolean) : [];
 }
 
+function finalAnswers(record) {
+  const answers = improvementAnswers(record);
+  if ("additional_improvement" in answers || "final_comments" in answers) {
+    return {
+      other: normalizeText(answers.additional_improvement),
+      more: normalizeText(answers.final_comments),
+    };
+  }
+  const notes = additionalNotes(record);
+  return { other: notes[0] ?? null, more: notes.slice(1).join(" | ") || null };
+}
+
 function delta(current, previous) {
   return current === null || previous === null ? null : current - previous;
 }
@@ -409,7 +421,6 @@ function latestPatientRows(records) {
     add("Média atual de saúde (0–10)", finiteNumber(current.health_average));
     add("Variação da saúde desde a primeira", summary?.health_change ?? null);
     add("Expectativas", expectations(current));
-    add("Observações adicionais", additionalNotes(current).join(" | "));
 
     for (const [key, label] of IMPROVEMENT_FIELDS) {
       const answer = goalAnswer(current, key);
@@ -417,6 +428,10 @@ function latestPatientRows(records) {
       add(`${label} — detalhes`, skipped ? "Não se aplica" : normalizeText(answer.detail));
       add(`${label} — nota (0–10)`, skipped ? "Não se aplica" : finiteNumber(answer.score));
     }
+
+    const finals = finalAnswers(current);
+    add("Outra melhoria que busca", finals.other || "Não respondeu");
+    add("Algo mais a acrescentar", finals.more || "Não respondeu");
   }
 
   return rows;

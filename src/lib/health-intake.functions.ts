@@ -105,6 +105,8 @@ export const submitHealthIntake = createServerFn({ method: "POST" })
         additional_notes: [data.intake.additionalOne, data.intake.additionalTwo]
           .map((note) => note.trim())
           .filter(Boolean),
+        additional_improvement: data.intake.additionalOne.trim() || null,
+        final_comments: data.intake.additionalTwo.trim() || null,
       },
       pain_average: null,
       health_average: healthAverage,
