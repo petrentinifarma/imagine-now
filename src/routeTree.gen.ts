@@ -10,11 +10,23 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InicioRouteImport } from './routes/inicio'
+import { Route as PacotesRouteImport } from './routes/pacotes'
 import { Route as ApiPublicAnamnesesRouteImport } from './routes/api/public/anamneses'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InicioRoute = InicioRouteImport.update({
+  id: '/inicio',
+  path: '/inicio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PacotesRoute = PacotesRouteImport.update({
+  id: '/pacotes',
+  path: '/pacotes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicAnamnesesRoute = ApiPublicAnamnesesRouteImport.update({
@@ -25,27 +37,35 @@ const ApiPublicAnamnesesRoute = ApiPublicAnamnesesRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/inicio': typeof InicioRoute
+  '/pacotes': typeof PacotesRoute
   '/api/public/anamneses': typeof ApiPublicAnamnesesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/inicio': typeof InicioRoute
+  '/pacotes': typeof PacotesRoute
   '/api/public/anamneses': typeof ApiPublicAnamnesesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/inicio': typeof InicioRoute
+  '/pacotes': typeof PacotesRoute
   '/api/public/anamneses': typeof ApiPublicAnamnesesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/public/anamneses'
+  fullPaths: '/' | '/inicio' | '/pacotes' | '/api/public/anamneses'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/public/anamneses'
-  id: '__root__' | '/' | '/api/public/anamneses'
+  to: '/' | '/inicio' | '/pacotes' | '/api/public/anamneses'
+  id: '__root__' | '/' | '/inicio' | '/pacotes' | '/api/public/anamneses'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  InicioRoute: typeof InicioRoute
+  PacotesRoute: typeof PacotesRoute
   ApiPublicAnamnesesRoute: typeof ApiPublicAnamnesesRoute
 }
 
@@ -56,6 +76,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inicio': {
+      id: '/inicio'
+      path: '/inicio'
+      fullPath: '/inicio'
+      preLoaderRoute: typeof InicioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pacotes': {
+      id: '/pacotes'
+      path: '/pacotes'
+      fullPath: '/pacotes'
+      preLoaderRoute: typeof PacotesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/anamneses': {
@@ -70,6 +104,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  InicioRoute: InicioRoute,
+  PacotesRoute: PacotesRoute,
   ApiPublicAnamnesesRoute: ApiPublicAnamnesesRoute,
 }
 export const routeTree = rootRouteImport

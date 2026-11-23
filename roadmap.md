@@ -1,1 +1,4 @@
 - [ ] Integração externa por token (aguardando Pedro gerar o token)
+- [ ] Site: vídeos de boas-vindas e do método (aguardando Pedro gravar)
+- [ ] Site: nomes, conteúdos e preços dos 3 pacotes (aguardando arquivo do Pedro)
+- [ ] Site: pagamento pelo Asaas (aguardando decisão/conta)
