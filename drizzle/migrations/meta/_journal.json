@@ -29,6 +29,13 @@
       "when": 1791223541287,
       "tag": "0003_ensure_secure_health_intakes_idempotent",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795457708169,
+      "tag": "0004_create_orders_and_bookings",
+      "breakpoints": true
     }
   ]
 }

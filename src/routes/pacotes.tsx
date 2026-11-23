@@ -1,6 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { ArrowRight, Check, Smartphone } from "lucide-react";
+import { ArrowRight, Check, Loader2, Smartphone } from "lucide-react";
+import { PLANS, findPlan, formatBRL, isValidCpf } from "@/lib/plans";
+import { createCheckout } from "@/lib/payments.functions";
 import { SectionLabel, SiteShell } from "@/components/site/site-shell";
 
 export const Route = createFileRoute("/pacotes")({
@@ -17,14 +20,10 @@ export const Route = createFileRoute("/pacotes")({
   component: Pacotes,
 });
 
-const plans = [
-  { id: "essencial", name: "Saúde em Dia", tag: "Essencial", items: ["Consulta inicial completa", "Plano personalizado", "1 retorno"], price: "R$ —" },
-  { id: "alta", name: "Saúde em Alta", tag: "Mais escolhido", items: ["Consulta inicial completa", "Plano personalizado", "Retornos mensais", "Ajustes no tratamento"], price: "R$ —" },
-  { id: "longevidade", name: "Longevidade", tag: "Integral", items: ["Consulta inicial completa", "Plano personalizado", "Retornos frequentes", "Acompanhamento próximo"], price: "R$ —" },
-];
 
 function Pacotes() {
   const [selected, setSelected] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
   return (
     <SiteShell>
       <section className="mx-auto max-w-5xl px-5 pt-10">
@@ -36,7 +35,7 @@ function Pacotes() {
       </section>
 
       <section className="mx-auto mt-8 grid max-w-5xl gap-5 px-5 md:grid-cols-3">
-        {plans.map((p) => {
+        {PLANS.map((p) => {
           const on = selected === p.id;
           return (
             <div key={p.id} className={`flex flex-col rounded-3xl bg-card p-6 shadow-app ring-2 transition ${on ? "ring-primary" : "ring-transparent"}`}>
@@ -55,7 +54,7 @@ function Pacotes() {
                   <li key={i} className="flex gap-2"><Check className="mt-1 h-4 w-4 shrink-0 text-accent" />{i}</li>
                 ))}
               </ul>
-              <p className="mt-6 border-t border-stone-strong pt-4 text-sm text-muted-foreground">Investimento <span className="block font-display text-2xl text-ink">{p.price}</span></p>
+              <p className="mt-6 border-t border-stone-strong pt-4 text-sm text-muted-foreground">Investimento <span className="block font-display text-2xl text-ink">{formatBRL(p.amountCents)}</span></p>
             </div>
           );
         })}
@@ -66,13 +65,18 @@ function Pacotes() {
           <button
             type="button"
             disabled={!selected}
-            onClick={() => alert("O pagamento será conectado em breve.")}
+            onClick={() => {
+              setShowForm(true);
+              setTimeout(() => document.getElementById("dados-pagamento")?.scrollIntoView({ behavior: "smooth" }), 50);
+            }}
             className="flex h-16 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-xl font-semibold text-primary-foreground disabled:opacity-40"
           >
             Continuar para o pagamento <ArrowRight className="h-5 w-5" />
           </button>
         </div>
       </div>
+
+      {showForm && selected && <CheckoutForm planId={selected} />}
 
       <section className="mx-auto mt-12 max-w-5xl px-5">
         <div className="rounded-3xl border-2 border-accent bg-card p-6 sm:p-10">
@@ -96,5 +100,60 @@ function Pacotes() {
         </div>
       </section>
     </SiteShell>
+  );
+}
+
+function maskCpf(v: string) {
+  const d = v.replace(/\D/g, "").slice(0, 11);
+  return d.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+}
+
+function CheckoutForm({ planId }: { planId: string }) {
+  const plan = findPlan(planId);
+  const checkout = useServerFn(createCheckout);
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ name: "", email: "", cpf: "", phone: "" });
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  if (!plan) return null;
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    if (form.name.trim().length < 3) return setError("Digite seu nome completo.");
+    if (!/^\S+@\S+\.\S+$/.test(form.email)) return setError("Confira seu e-mail.");
+    if (!isValidCpf(form.cpf)) return setError("Confira seu CPF: ele é necessário para emitir a cobrança.");
+    setBusy(true);
+    const tab = window.open("", "_blank");
+    try {
+      const r = await checkout({ data: { planId, ...form } });
+      if (tab) tab.location.href = r.invoiceUrl;
+      navigate({ to: "/pagamento/$orderId", params: { orderId: r.orderId } });
+    } catch {
+      tab?.close();
+      setError("Não conseguimos gerar o pagamento agora. Tente novamente em instantes.");
+      setBusy(false);
+    }
+  };
+
+  const field = "mt-2 h-14 w-full rounded-xl border-2 border-stone-strong bg-card px-4 text-lg outline-none focus:border-primary";
+  return (
+    <section id="dados-pagamento" className="mx-auto mt-10 max-w-5xl scroll-mt-24 px-5">
+      <form onSubmit={submit} className="rounded-3xl bg-card p-6 shadow-app sm:p-10">
+        <SectionLabel>Seus dados</SectionLabel>
+        <h2 className="mt-2 font-display text-3xl text-primary">{plan.name} · {formatBRL(plan.amountCents)}</h2>
+        <p className="mt-2 text-base text-muted-foreground">Na próxima etapa você escolhe pagar por Pix, boleto ou cartão, numa página segura do Asaas.</p>
+        <div className="mt-6 grid gap-5 sm:grid-cols-2">
+          <label className="text-base font-semibold">Nome completo<input className={field} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} autoComplete="name" /></label>
+          <label className="text-base font-semibold">E-mail<input type="email" className={field} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} autoComplete="email" /></label>
+          <label className="text-base font-semibold">CPF<input inputMode="numeric" className={field} value={form.cpf} onChange={(e) => setForm({ ...form, cpf: maskCpf(e.target.value) })} /></label>
+          <label className="text-base font-semibold">WhatsApp (opcional)<input inputMode="tel" className={field} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} autoComplete="tel" /></label>
+        </div>
+        {error && <p role="alert" className="mt-4 text-base font-semibold text-destructive">{error}</p>}
+        <button type="submit" disabled={busy} className="mt-6 flex h-16 w-full items-center justify-center gap-2 rounded-2xl bg-accent text-xl font-bold text-accent-foreground disabled:opacity-60">
+          {busy ? <><Loader2 className="h-5 w-5 animate-spin" /> Gerando pagamento…</> : <>Ir para o pagamento seguro <ArrowRight className="h-5 w-5" /></>}
+        </button>
+      </form>
+    </section>
   );
 }

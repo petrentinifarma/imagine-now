@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          created_at: string
+          email: string
+          ends_at: string
+          google_event_id: string | null
+          id: string
+          meet_url: string | null
+          name: string
+          phone: string | null
+          starts_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          ends_at: string
+          google_event_id?: string | null
+          id?: string
+          meet_url?: string | null
+          name: string
+          phone?: string | null
+          starts_at: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          ends_at?: string
+          google_event_id?: string | null
+          id?: string
+          meet_url?: string | null
+          name?: string
+          phone?: string | null
+          starts_at?: string
+        }
+        Relationships: []
+      }
+      asaas_events: {
+        Row: {
+          created_at: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       health_intake_submission_attempts: {
         Row: {
           created_at: string
@@ -86,6 +137,57 @@ export type Database = {
           profession?: string | null
           request_id?: string
           weight_kg?: number | null
+        }
+        Relationships: []
+      }
+      package_orders: {
+        Row: {
+          amount_cents: number
+          asaas_customer_id: string | null
+          asaas_payment_id: string | null
+          buyer_cpf: string
+          buyer_email: string
+          buyer_name: string
+          buyer_phone: string | null
+          created_at: string
+          id: string
+          invoice_url: string | null
+          paid_at: string | null
+          plan_id: string
+          plan_name: string
+          status: string
+        }
+        Insert: {
+          amount_cents: number
+          asaas_customer_id?: string | null
+          asaas_payment_id?: string | null
+          buyer_cpf: string
+          buyer_email: string
+          buyer_name: string
+          buyer_phone?: string | null
+          created_at?: string
+          id?: string
+          invoice_url?: string | null
+          paid_at?: string | null
+          plan_id: string
+          plan_name: string
+          status?: string
+        }
+        Update: {
+          amount_cents?: number
+          asaas_customer_id?: string | null
+          asaas_payment_id?: string | null
+          buyer_cpf?: string
+          buyer_email?: string
+          buyer_name?: string
+          buyer_phone?: string | null
+          created_at?: string
+          id?: string
+          invoice_url?: string | null
+          paid_at?: string | null
+          plan_id?: string
+          plan_name?: string
+          status?: string
         }
         Relationships: []
       }

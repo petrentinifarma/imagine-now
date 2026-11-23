@@ -10,13 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as InicioRouteImport } from './routes/inicio'
 import { Route as PacotesRouteImport } from './routes/pacotes'
+import { Route as PagamentoOrderIdRouteImport } from './routes/pagamento/$orderId'
 import { Route as ApiPublicAnamnesesRouteImport } from './routes/api/public/anamneses'
+import { Route as ApiPublicAsaasWebhookRouteImport } from './routes/api/public/asaas-webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgendarRoute = AgendarRouteImport.update({
+  id: '/agendar',
+  path: '/agendar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InicioRoute = InicioRouteImport.update({
@@ -29,44 +37,88 @@ const PacotesRoute = PacotesRouteImport.update({
   path: '/pacotes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PagamentoOrderIdRoute = PagamentoOrderIdRouteImport.update({
+  id: '/pagamento/$orderId',
+  path: '/pagamento/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicAnamnesesRoute = ApiPublicAnamnesesRouteImport.update({
   id: '/api/public/anamneses',
   path: '/api/public/anamneses',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAsaasWebhookRoute = ApiPublicAsaasWebhookRouteImport.update({
+  id: '/api/public/asaas-webhook',
+  path: '/api/public/asaas-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agendar': typeof AgendarRoute
   '/inicio': typeof InicioRoute
   '/pacotes': typeof PacotesRoute
+  '/pagamento/$orderId': typeof PagamentoOrderIdRoute
   '/api/public/anamneses': typeof ApiPublicAnamnesesRoute
+  '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agendar': typeof AgendarRoute
   '/inicio': typeof InicioRoute
   '/pacotes': typeof PacotesRoute
+  '/pagamento/$orderId': typeof PagamentoOrderIdRoute
   '/api/public/anamneses': typeof ApiPublicAnamnesesRoute
+  '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agendar': typeof AgendarRoute
   '/inicio': typeof InicioRoute
   '/pacotes': typeof PacotesRoute
+  '/pagamento/$orderId': typeof PagamentoOrderIdRoute
   '/api/public/anamneses': typeof ApiPublicAnamnesesRoute
+  '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/inicio' | '/pacotes' | '/api/public/anamneses'
+  fullPaths:
+    | '/'
+    | '/agendar'
+    | '/inicio'
+    | '/pacotes'
+    | '/pagamento/$orderId'
+    | '/api/public/anamneses'
+    | '/api/public/asaas-webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/inicio' | '/pacotes' | '/api/public/anamneses'
-  id: '__root__' | '/' | '/inicio' | '/pacotes' | '/api/public/anamneses'
+  to:
+    | '/'
+    | '/agendar'
+    | '/inicio'
+    | '/pacotes'
+    | '/pagamento/$orderId'
+    | '/api/public/anamneses'
+    | '/api/public/asaas-webhook'
+  id:
+    | '__root__'
+    | '/'
+    | '/agendar'
+    | '/inicio'
+    | '/pacotes'
+    | '/pagamento/$orderId'
+    | '/api/public/anamneses'
+    | '/api/public/asaas-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgendarRoute: typeof AgendarRoute
   InicioRoute: typeof InicioRoute
   PacotesRoute: typeof PacotesRoute
+  PagamentoOrderIdRoute: typeof PagamentoOrderIdRoute
   ApiPublicAnamnesesRoute: typeof ApiPublicAnamnesesRoute
+  ApiPublicAsaasWebhookRoute: typeof ApiPublicAsaasWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -76,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agendar': {
+      id: '/agendar'
+      path: '/agendar'
+      fullPath: '/agendar'
+      preLoaderRoute: typeof AgendarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/inicio': {
@@ -92,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PacotesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pagamento/$orderId': {
+      id: '/pagamento/$orderId'
+      path: '/pagamento/$orderId'
+      fullPath: '/pagamento/$orderId'
+      preLoaderRoute: typeof PagamentoOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/anamneses': {
       id: '/api/public/anamneses'
       path: '/api/public/anamneses'
@@ -99,14 +165,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAnamnesesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/asaas-webhook': {
+      id: '/api/public/asaas-webhook'
+      path: '/api/public/asaas-webhook'
+      fullPath: '/api/public/asaas-webhook'
+      preLoaderRoute: typeof ApiPublicAsaasWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgendarRoute: AgendarRoute,
   InicioRoute: InicioRoute,
   PacotesRoute: PacotesRoute,
+  PagamentoOrderIdRoute: PagamentoOrderIdRoute,
   ApiPublicAnamnesesRoute: ApiPublicAnamnesesRoute,
+  ApiPublicAsaasWebhookRoute: ApiPublicAsaasWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

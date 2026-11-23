@@ -1,4 +1,6 @@
 - [ ] Integração externa por token (aguardando Pedro gerar o token)
 - [ ] Site: vídeos de boas-vindas e do método (aguardando Pedro gravar)
-- [ ] Site: nomes, conteúdos e preços dos 3 pacotes (aguardando arquivo do Pedro)
-- [ ] Site: pagamento pelo Asaas (aguardando decisão/conta)
+- [ ] Site: nomes, conteúdos e preços dos 3 pacotes (preços provisórios R$ 497/897/1.497 aguardando Pedro)
+- [ ] Asaas: registrar aviso automático de pagamento após publicar
+- [x] Pagamento Asaas + confirmação
+- [x] Agendamento Google Agenda + Meet
